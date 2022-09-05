@@ -59,9 +59,9 @@ public class Juego {
 			if (mostrarAviso) {
 				System.out.println("El casillero se encuentra ocupado intente nuevamente");
 			}
-			System.out.println("\ningrese la fila de la jugada: ");
+			System.out.println("\ningrese la fila de la jugada (del 0 al 2): ");
 			fila = Integer.parseInt(lector.nextLine());
-			System.out.println("ingrese la columna de la jugada: ");
+			System.out.println("ingrese la columna de la jugada (del 0 al 2): ");
 			columna = Integer.parseInt(lector.nextLine());
 			mostrarAviso = true;
 		} while (!tab.verificarCasilleroVacio(fila, columna));
