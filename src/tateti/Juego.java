@@ -13,7 +13,7 @@ public class Juego {
 		imprimirBienvenida();
 		tablero.imprimir();
 		loopDeJuego(estadisticas, tablero, lector);
-		imprimirResultado(estadisticas);
+		imprimirResultado(estadisticas, tablero);
 		lector.close();
 	}
 	
@@ -43,8 +43,8 @@ public class Juego {
 		int fila;
 		int columna;
 		do {
-			fila = (int)(Math.random()*2)+1;
-			columna = (int)(Math.random()*2)+1;
+			fila = (int)(Math.random()*3);
+			columna = (int)(Math.random()*3);
 		} while (!tab.verificarCasilleroVacio(fila, columna));
 		Ficha ficha = new FichaO(fila,columna);
 		return ficha;
@@ -89,11 +89,11 @@ public class Juego {
 		System.out.println("Bienvenido al Ta-Te-Ti OOP\n");
 	}
 	
-	private static void imprimirResultado(Estadisticas estadisticas) {
-		if (estadisticas.getJugada() ==9) {
-			System.out.println("\nEmpate");
-		} else {
+	private static void imprimirResultado(Estadisticas estadisticas , Tablero tablero) {
+		if (tablero.getHayGanador()) {
 			System.out.println("\nGana el jugador "+ (estadisticas.getTurnoDeJugador() -1));
+		} else {
+			System.out.println("\nEmpate");
 		}
 	}
 

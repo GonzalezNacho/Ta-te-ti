@@ -3,9 +3,11 @@ package tateti;
 public class Tablero {
 	
 	private char [][] tabla;
+	private boolean hayGanador;
 	
 	public Tablero() {
 		this.tabla = new char [3][3];
+		this.setHayGanador(false);
 	}
 	
 	public void limpiar() {
@@ -36,6 +38,7 @@ public class Tablero {
 	
 	public boolean verificarSiHayGanador (int fila ,int columna) {
 		if (hayGanadorEnFila(fila) || hayGanadorEnColumna(columna) || hayGanadorEnDiagonal()) {
+			this.setHayGanador(true);
 			return true;
 		} else {
 			return false;
@@ -64,5 +67,13 @@ public class Tablero {
 		} else {
 			return false;
 		}
+	}
+
+	public boolean getHayGanador() {
+		return hayGanador;
+	}
+
+	private void setHayGanador(boolean hayGanador) {
+		this.hayGanador = hayGanador;
 	}
 }
