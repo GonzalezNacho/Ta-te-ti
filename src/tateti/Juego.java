@@ -6,7 +6,6 @@ import java.lang.Math;
 public class Juego {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		Scanner lector = new Scanner(System.in);
 		Tablero tablero = new Tablero();
 		Estadisticas estadisticas = new Estadisticas();
@@ -75,7 +74,12 @@ public class Juego {
 				System.out.println("El valor de la " + filaOColumna + " tiene que ser estrictamente un valor del 0 al 2 ");
 			}
 			System.out.println("\ningrese la " + filaOColumna + " de la jugada (del 0 al 2): ");
-			valor = Integer.parseInt(lector.nextLine());
+			try {
+				valor = Integer.parseInt(lector.nextLine());
+			} catch (NumberFormatException e) {
+				System.out.println("¡Cuidado! Solo puedes insertar números. ");
+				valor = 3;
+			}
 			filasOColumnasFueraDeRango = true;
 		} while (!(valor >= 0 && valor <= 2));
 		return valor;
