@@ -11,6 +11,8 @@ public class Juego {
 		Estadisticas estadisticas = new Estadisticas();
 		tablero.limpiar();
 		imprimirBienvenida();
+		ConectaBD bd = new ConectaBD("localhost:3306/Tateti","root","almitasol20");
+		bd.imprimirTablaIdiomas();
 		tablero.imprimir();
 		loopDeJuego(estadisticas, tablero, lector);
 		imprimirResultado(estadisticas, tablero);
