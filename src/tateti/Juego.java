@@ -2,6 +2,8 @@ package tateti;
 
 import java.util.Scanner;
 import java.lang.Math;
+import java.time.LocalDateTime;
+//import java.time.format.DateTimeFormatter;
 
 public class Juego {
 
@@ -10,19 +12,25 @@ public class Juego {
 		Tablero tablero = new Tablero();
 		Estadisticas estadisticas = new Estadisticas();
 		tablero.limpiar();
+		LocalDateTime inicioPartida = LocalDateTime.now();
+		LocalDateTime finPartida = null;
 		ConectaBD bd = new ConectaBD("localhost:3306/Tateti","root","almitasol20");
 		int idioma = seleccionarIdioma(bd, lector);
 		imprimirBienvenida(bd,idioma);
+		String nombreJugador = solicitarNombre(bd, idioma, lector);
 		tablero.imprimir();
-		loopDeJuego(estadisticas, tablero, lector, bd, idioma);
-		imprimirResultado(estadisticas, tablero);
+		loopDeJuego(estadisticas, tablero, lector, bd, idioma, inicioPartida);
+		imprimirResultado(estadisticas, tablero, inicioPartida, finPartida, nombreJugador, bd);
 		lector.close();
 	}
 	
-	private static void loopDeJuego(Estadisticas estadisticas, Tablero tab, Scanner lector, ConectaBD bd, int idioma) {
+	private static void loopDeJuego(Estadisticas estadisticas, Tablero tab, Scanner lector, ConectaBD bd, int idioma, LocalDateTime inicioPartida) {
 		boolean hayGanador = false;
 		while (hayGanador == false && estadisticas.getJugada() < 9) {
 			Ficha ficha = obtenerFicha(estadisticas, lector, tab, bd, idioma);
+			/*if (estadisticas.getJugada() == 0) {
+				inicioPartida = LocalDateTime.now();
+			}*/
 			tab.colocarFicha(ficha);
 			tab.imprimir();
 			estadisticas.aumentarJugada();
@@ -93,12 +101,29 @@ public class Juego {
 		System.out.println(bd.imprimirMensaje(idioma, mensaje));
 	}
 	
-	private static void imprimirResultado(Estadisticas estadisticas , Tablero tablero) {
+	private static String solicitarNombre(ConectaBD bd, int idioma, Scanner lector) {
+		int mensaje = 11;
+		System.out.println(bd.imprimirMensaje(idioma, mensaje));
+		String nombre = lector.nextLine();
+		return nombre;
+	}
+	
+	private static void imprimirResultado(Estadisticas estadisticas , Tablero tablero,  LocalDateTime inicioPartida,  LocalDateTime finPartida, String nombre, ConectaBD bd ) {
+		finPartida = LocalDateTime.now();
 		if (tablero.getHayGanador()) {
-			System.out.println("\nGana el jugador "+ (estadisticas.getTurnoDeJugador() -1));
+			String ganador = "";
+			int ganadorEntero = estadisticas.getTurnoDeJugador() -1;
+			if (ganadorEntero == 1) {
+				ganador = nombre;
+			} else {
+				ganador = "computadora";
+			}
+			bd.cargarResultados(inicioPartida, finPartida, nombre, ganador);
 		} else {
 			System.out.println("\nEmpate");
+			bd.cargarResultados(inicioPartida, finPartida, nombre, "Empate");
 		}
+		bd.imprimirTablaResultados();
 	}
 	
 	private static int seleccionarIdioma(ConectaBD bd, Scanner lector) {

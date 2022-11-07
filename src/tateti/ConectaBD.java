@@ -4,6 +4,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.sql.ResultSet;
 
 public class ConectaBD {
@@ -30,17 +31,13 @@ public class ConectaBD {
 	public void imprimirTablaIdiomas() {
 		System.out.println("Seleccione un idioma: ");
 		try {
-			//1- Crear conexion
-			//Connection miConexion = DriverManager.getConnection("jdbc:mysql://" + this.conexion,this.usuario,this.contraseña);
-			//Connection miConexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/Tateti?serverTimezone=UTC","root","almitasol20");
-			
-			//2- Crear objeto STATEMENT
+			//1- Crear objeto STATEMENT
 			Statement miStatement =this.miConexion.createStatement();
 			
-			//3- Ejecutar la instruccion SQL
+			//2- Ejecutar la instruccion SQL
 			ResultSet miResultSet = miStatement.executeQuery("select * from Idiomas");
 			
-			//4- Recorrer el ResultSet
+			//3- Recorrer el ResultSet
 			while (miResultSet.next()) {
 				System.out.println(miResultSet.getString("codigo") + " "+ miResultSet.getString("descripcion"));
 			}
@@ -57,14 +54,11 @@ public class ConectaBD {
 	public String imprimirMensaje(int idioma, int mensaje) {
 		String mensajeAImprimir ="";
 		try {
-			//1- Crear conexion
-			//Connection miConexion = DriverManager.getConnection("jdbc:mysql://" + this.conexion,this.usuario,this.contraseña);
-			//Connection miConexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/Tateti?serverTimezone=UTC","root","almitasol20");
 			
-			//2- Crear objeto STATEMENT
+			//1- Crear objeto STATEMENT
 			PreparedStatement miStatement = this.miConexion.prepareStatement("select * from Mensaje_por_idioma where cod_idioma =? and cod_mensaje =?");
 			
-			//3- Establecer los parametros
+			//2- Establecer los parametros
 			miStatement.setInt(1, idioma);
 			miStatement.setInt(2, mensaje);
 			
@@ -86,6 +80,52 @@ public class ConectaBD {
 		}
 		
 		return mensajeAImprimir;
+	}
+	
+	public void cargarResultados( LocalDateTime inicioPartida,  LocalDateTime finPartida, String nombre, String ganador) {
+		try {
+			
+			//1- Crear objeto STATEMENT
+			Statement miStatement = this.miConexion.createStatement();
+			
+			//2- instruccion SQL
+			String sql = "insert into Resultados_partidas (final_partida, comienzo_partida, Jugador_NOMBRE, ganador) values ('" + finPartida + "','" + inicioPartida + "','" + nombre + "','"+ ganador +"')";
+			//String sql = "insert into Resultados_partidas ( Jugador_NOMBRE, ganador) values ('" + nombre + "','"+ ganador +"')";
+			
+			
+			//3- Ejecutar la instruccion SQL
+			miStatement.executeUpdate(sql);
+			
+		}
+		
+		catch(Exception e) {
+			System.out.println("No conecta, al cargar resultados");
+			e.printStackTrace();
+		}
+	}
+	
+	public void imprimirTablaResultados() {
+		System.out.println("\n\t\ttabla de resultados: \n");
+		try {
+			//1- Crear objeto STATEMENT
+			Statement miStatement =this.miConexion.createStatement();
+			
+			//2- Ejecutar la instruccion SQL
+			ResultSet miResultSet = miStatement.executeQuery("select * from Resultados_partidas");
+			
+			//3- Recorrer el ResultSet
+			System.out.println("nro. de partida\t nombre\t comienzo de partida\t\t final de partida\t\t ganador\n");
+			while (miResultSet.next()) {
+				System.out.println(miResultSet.getString("idresultado_partida") + "\t\t "+ miResultSet.getString("Jugador_NOMBRE") + "\t "+ miResultSet.getString("comienzo_partida") + "\t "+ miResultSet.getString("final_partida") + "\t "+ miResultSet.getString("ganador"));
+			}
+			
+			miResultSet.close();
+		}
+		
+		catch(Exception e) {
+			System.out.println("No conecta imprimir tabla de resultados");
+			e.printStackTrace();
+		}
 	}
 	
 }
