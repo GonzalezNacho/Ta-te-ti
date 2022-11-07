@@ -10,19 +10,19 @@ public class Juego {
 		Tablero tablero = new Tablero();
 		Estadisticas estadisticas = new Estadisticas();
 		tablero.limpiar();
-		imprimirBienvenida();
 		ConectaBD bd = new ConectaBD("localhost:3306/Tateti","root","almitasol20");
-		bd.imprimirTablaIdiomas();
+		int idioma = seleccionarIdioma(bd, lector);
+		imprimirBienvenida(bd,idioma);
 		tablero.imprimir();
-		loopDeJuego(estadisticas, tablero, lector);
+		loopDeJuego(estadisticas, tablero, lector, bd, idioma);
 		imprimirResultado(estadisticas, tablero);
 		lector.close();
 	}
 	
-	private static void loopDeJuego(Estadisticas estadisticas, Tablero tab, Scanner lector) {
+	private static void loopDeJuego(Estadisticas estadisticas, Tablero tab, Scanner lector, ConectaBD bd, int idioma) {
 		boolean hayGanador = false;
 		while (hayGanador == false && estadisticas.getJugada() < 9) {
-			Ficha ficha = obtenerFicha(estadisticas, lector, tab);
+			Ficha ficha = obtenerFicha(estadisticas, lector, tab, bd, idioma);
 			tab.colocarFicha(ficha);
 			tab.imprimir();
 			estadisticas.aumentarJugada();
@@ -30,13 +30,14 @@ public class Juego {
 		}
 	}
 
-	private static Ficha obtenerFicha(Estadisticas stats, Scanner lector,Tablero tab) {
+	private static Ficha obtenerFicha(Estadisticas stats, Scanner lector,Tablero tab, ConectaBD bd, int idioma) {
 		Ficha ficha;
+		int mensaje = 2;
 		if (stats.getTurnoDeJugador() == 1) {
 			ficha = pedirDatosDeFicha(lector,tab);
 		} else {
 			ficha = generarDatosDeFicha(tab);
-			System.out.println("\nLa jugada de la computadora es: \n");
+			System.out.println("\n"+ bd.imprimirMensaje(idioma, mensaje)+"\n");
 		}
 		return ficha;
 	}
@@ -87,8 +88,9 @@ public class Juego {
 		return valor;
 	}
 
-	private static void imprimirBienvenida() {
-		System.out.println("Bienvenido al Ta-Te-Ti OOP\n");
+	private static void imprimirBienvenida(ConectaBD bd, int idioma) {
+		int mensaje = 1;
+		System.out.println(bd.imprimirMensaje(idioma, mensaje));
 	}
 	
 	private static void imprimirResultado(Estadisticas estadisticas , Tablero tablero) {
@@ -97,6 +99,16 @@ public class Juego {
 		} else {
 			System.out.println("\nEmpate");
 		}
+	}
+	
+	private static int seleccionarIdioma(ConectaBD bd, Scanner lector) {
+		bd.imprimirTablaIdiomas();
+		int valor = 0;
+		do {
+			System.out.println("\ningrese el numero correspodiente al idioma (del 1 al 4): ");
+			valor = Integer.parseInt(lector.nextLine());
+		} while (!(valor >= 1 && valor <= 4));
+		return valor;
 	}
 
 }
