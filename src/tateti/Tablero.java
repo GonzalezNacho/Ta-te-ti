@@ -19,6 +19,7 @@ public class Tablero {
 	}
 	
 	public void imprimir() {
+		System.out.println();
 		for (int i = 0;i < this.tabla.length;i++) {
 		    for (int j=0;j < this.tabla[i].length;j++) {
 			    System.out.print("|" + this.tabla[i][j]);
@@ -26,6 +27,7 @@ public class Tablero {
 		System.out.print("|");
 		System.out.println();
 	    }
+		System.out.println();
 	}
 	
 	public boolean verificarCasilleroVacio (int fila, int columna) {

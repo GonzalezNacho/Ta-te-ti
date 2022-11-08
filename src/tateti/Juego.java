@@ -3,7 +3,6 @@ package tateti;
 import java.util.Scanner;
 import java.lang.Math;
 import java.time.LocalDateTime;
-//import java.time.format.DateTimeFormatter;
 
 public class Juego {
 
@@ -20,7 +19,7 @@ public class Juego {
 		String nombreJugador = solicitarNombre(bd, idioma, lector);
 		tablero.imprimir();
 		loopDeJuego(estadisticas, tablero, lector, bd, idioma, inicioPartida);
-		imprimirResultado(estadisticas, tablero, inicioPartida, finPartida, nombreJugador, bd);
+		imprimirResultado(estadisticas, tablero, inicioPartida, finPartida, nombreJugador, bd, idioma);
 		lector.close();
 	}
 	
@@ -28,9 +27,6 @@ public class Juego {
 		boolean hayGanador = false;
 		while (hayGanador == false && estadisticas.getJugada() < 9) {
 			Ficha ficha = obtenerFicha(estadisticas, lector, tab, bd, idioma);
-			/*if (estadisticas.getJugada() == 0) {
-				inicioPartida = LocalDateTime.now();
-			}*/
 			tab.colocarFicha(ficha);
 			tab.imprimir();
 			estadisticas.aumentarJugada();
@@ -42,7 +38,7 @@ public class Juego {
 		Ficha ficha;
 		int mensaje = 2;
 		if (stats.getTurnoDeJugador() == 1) {
-			ficha = pedirDatosDeFicha(lector,tab);
+			ficha = pedirDatosDeFicha(lector,tab, bd, idioma);
 		} else {
 			ficha = generarDatosDeFicha(tab);
 			System.out.println("\n"+ bd.imprimirMensaje(idioma, mensaje)+"\n");
@@ -61,34 +57,36 @@ public class Juego {
 		return ficha;
 	}
 
-	private static Ficha pedirDatosDeFicha(Scanner lector,Tablero tab) {
+	private static Ficha pedirDatosDeFicha(Scanner lector,Tablero tab, ConectaBD bd, int idioma) {
 		boolean mostrarAviso = false;
 		int fila;
 		int columna;
 		do {
 			if (mostrarAviso) {
-				System.out.println("El casillero se encuentra ocupado intente nuevamente");
+				int mensaje = 3;
+				System.out.println(bd.imprimirMensaje(idioma, mensaje));
 			}
-			fila = ingresarFilaOColumna(lector, "fila");
-			columna = ingresarFilaOColumna(lector, "columna");
+			fila = ingresarFilaOColumna(lector, 4, 6, bd, idioma);
+			columna = ingresarFilaOColumna(lector, 5, 7, bd, idioma);
 			mostrarAviso = true;
 		} while (!tab.verificarCasilleroVacio(fila, columna));
 		Ficha ficha = new FichaX(fila,columna);
 		return ficha;
 	}
 	
-	private static int ingresarFilaOColumna (Scanner lector, String filaOColumna ) {
+	private static int ingresarFilaOColumna (Scanner lector, int mensaje1, int mensaje2, ConectaBD bd, int idioma) {
 		int valor;
 		boolean filasOColumnasFueraDeRango = false;
 		do {
 			if (filasOColumnasFueraDeRango) {
-				System.out.println("El valor de la " + filaOColumna + " tiene que ser estrictamente un valor del 0 al 2 ");
+				System.out.println(bd.imprimirMensaje(idioma, mensaje1));
 			}
-			System.out.println("\ningrese la " + filaOColumna + " de la jugada (del 0 al 2): ");
+			System.out.println(bd.imprimirMensaje(idioma, mensaje2));
 			try {
 				valor = Integer.parseInt(lector.nextLine());
 			} catch (NumberFormatException e) {
-				System.out.println("¡Cuidado! Solo puedes insertar números. ");
+				int mensaje = 8;
+				System.out.println(bd.imprimirMensaje(idioma, mensaje));
 				valor = 3;
 			}
 			filasOColumnasFueraDeRango = true;
@@ -108,7 +106,7 @@ public class Juego {
 		return nombre;
 	}
 	
-	private static void imprimirResultado(Estadisticas estadisticas , Tablero tablero,  LocalDateTime inicioPartida,  LocalDateTime finPartida, String nombre, ConectaBD bd ) {
+	private static void imprimirResultado(Estadisticas estadisticas , Tablero tablero,  LocalDateTime inicioPartida,  LocalDateTime finPartida, String nombre, ConectaBD bd, int idioma ) {
 		finPartida = LocalDateTime.now();
 		if (tablero.getHayGanador()) {
 			String ganador = "";
@@ -120,10 +118,11 @@ public class Juego {
 			}
 			bd.cargarResultados(inicioPartida, finPartida, nombre, ganador);
 		} else {
-			System.out.println("\nEmpate");
+			int mensaje = 10;
+			System.out.println(bd.imprimirMensaje(idioma, mensaje));
 			bd.cargarResultados(inicioPartida, finPartida, nombre, "Empate");
 		}
-		bd.imprimirTablaResultados();
+		bd.imprimirTablaResultados(idioma);
 	}
 	
 	private static int seleccionarIdioma(ConectaBD bd, Scanner lector) {

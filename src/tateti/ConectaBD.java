@@ -90,7 +90,6 @@ public class ConectaBD {
 			
 			//2- instruccion SQL
 			String sql = "insert into Resultados_partidas (final_partida, comienzo_partida, Jugador_NOMBRE, ganador) values ('" + finPartida + "','" + inicioPartida + "','" + nombre + "','"+ ganador +"')";
-			//String sql = "insert into Resultados_partidas ( Jugador_NOMBRE, ganador) values ('" + nombre + "','"+ ganador +"')";
 			
 			
 			//3- Ejecutar la instruccion SQL
@@ -104,8 +103,9 @@ public class ConectaBD {
 		}
 	}
 	
-	public void imprimirTablaResultados() {
-		System.out.println("\n\t\ttabla de resultados: \n");
+	public void imprimirTablaResultados(int idioma) {
+		int mensajeTitulo = 12;
+		System.out.println("\n\t\t"+ imprimirMensaje(idioma, mensajeTitulo) + " \n");
 		try {
 			//1- Crear objeto STATEMENT
 			Statement miStatement =this.miConexion.createStatement();
@@ -114,9 +114,11 @@ public class ConectaBD {
 			ResultSet miResultSet = miStatement.executeQuery("select * from Resultados_partidas");
 			
 			//3- Recorrer el ResultSet
-			System.out.println("nro. de partida\t nombre\t comienzo de partida\t\t final de partida\t\t ganador\n");
+			int mensaje = 13;
+			System.out.println(imprimirMensaje(idioma, mensaje)+"\n");
+			//System.out.println("nro. de partida\t nombre\t comienzo de partida\t\t final de partida\t\t ganador\n");
 			while (miResultSet.next()) {
-				System.out.println(miResultSet.getString("idresultado_partida") + "\t\t "+ miResultSet.getString("Jugador_NOMBRE") + "\t "+ miResultSet.getString("comienzo_partida") + "\t "+ miResultSet.getString("final_partida") + "\t "+ miResultSet.getString("ganador"));
+				System.out.println(miResultSet.getString("idresultado_partida") + "\t\t\t"+ miResultSet.getString("Jugador_NOMBRE") + "\t "+ miResultSet.getString("comienzo_partida") + "\t "+ miResultSet.getString("final_partida") + "\t "+ miResultSet.getString("ganador"));
 			}
 			
 			miResultSet.close();
