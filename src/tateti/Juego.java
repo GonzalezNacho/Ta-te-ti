@@ -17,9 +17,28 @@ public class Juego {
 		int idioma = seleccionarIdioma(bd, lector);
 		imprimirBienvenida(bd,idioma);
 		String nombreJugador = solicitarNombre(bd, idioma, lector);
-		tablero.imprimir();
-		loopDeJuego(estadisticas, tablero, lector, bd, idioma, inicioPartida);
-		imprimirResultado(estadisticas, tablero, inicioPartida, finPartida, nombreJugador, bd, idioma);
+		int opcion = menu(bd, idioma, lector);
+		while (opcion != 5) {
+			switch (opcion) {
+				case 1:
+					idioma = seleccionarIdioma(bd, lector);
+					break;
+				case 2:
+					tablero.imprimir();
+					loopDeJuego(estadisticas, tablero, lector, bd, idioma, inicioPartida);
+					cargarResultadoPartida(estadisticas, tablero, inicioPartida, finPartida, nombreJugador, bd, idioma);
+					break;
+				case 3:
+					bd.imprimirTablaResultados(idioma);
+					break;
+				case 4:
+					bd.imprimirTablaResultadosJugador(idioma, nombreJugador);
+					break;
+				case 5:
+					break;
+			}
+			opcion = menu(bd, idioma, lector);
+		}
 		lector.close();
 	}
 	
@@ -106,7 +125,7 @@ public class Juego {
 		return nombre;
 	}
 	
-	private static void imprimirResultado(Estadisticas estadisticas , Tablero tablero,  LocalDateTime inicioPartida,  LocalDateTime finPartida, String nombre, ConectaBD bd, int idioma ) {
+	private static void cargarResultadoPartida(Estadisticas estadisticas , Tablero tablero,  LocalDateTime inicioPartida,  LocalDateTime finPartida, String nombre, ConectaBD bd, int idioma ) {
 		finPartida = LocalDateTime.now();
 		if (tablero.getHayGanador()) {
 			String ganador = "";
@@ -114,7 +133,7 @@ public class Juego {
 			if (ganadorEntero == 1) {
 				ganador = nombre;
 			} else {
-				ganador = "computadora";
+				ganador = "Matrix";
 			}
 			bd.cargarResultados(inicioPartida, finPartida, nombre, ganador);
 		} else {
@@ -122,17 +141,42 @@ public class Juego {
 			System.out.println(bd.imprimirMensaje(idioma, mensaje));
 			bd.cargarResultados(inicioPartida, finPartida, nombre, "Empate");
 		}
-		bd.imprimirTablaResultados(idioma);
 	}
 	
 	private static int seleccionarIdioma(ConectaBD bd, Scanner lector) {
 		bd.imprimirTablaIdiomas();
 		int valor = 0;
+		int mensaje = 14;
 		do {
-			System.out.println("\ningrese el numero correspodiente al idioma (del 1 al 4): ");
+			System.out.println();
+			for(int i = 1; i <=4; i++) {
+				System.out.println(bd.imprimirMensaje(i, mensaje));
+			}
 			valor = Integer.parseInt(lector.nextLine());
 		} while (!(valor >= 1 && valor <= 4));
 		return valor;
 	}
-
+	
+	private static int menu(ConectaBD bd, int idioma, Scanner lector) {
+		int opcion = 0;
+		boolean opcionErronea = false;
+		do {
+			if (opcionErronea) {
+				int mensaje = 15;
+				System.out.println(bd.imprimirMensaje(idioma, mensaje));
+			} else {
+				imprimirMenu(bd, idioma);
+			}
+			opcion = Integer.parseInt(lector.nextLine());
+			opcionErronea = true;
+		} while (!(opcion >= 1 && opcion <= 5));
+		return opcion;
+	}
+	
+	private static void imprimirMenu(ConectaBD bd, int idioma) {
+		int mensaje = 15;
+		for (int i =1; i <=5; i++) {
+			System.out.println(i + "- " + bd.imprimirMensaje(idioma, mensaje +i));
+		}
+	}
 }

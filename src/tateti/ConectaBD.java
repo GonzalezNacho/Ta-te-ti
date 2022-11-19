@@ -130,4 +130,35 @@ public class ConectaBD {
 		}
 	}
 	
+	public void imprimirTablaResultadosJugador(int idioma, String jugador) {
+		int mensajeTitulo = 12;
+		System.out.println("\n\t\t"+ imprimirMensaje(idioma, mensajeTitulo) + " \n");
+		try {
+			//1- Crear objeto STATEMENT
+			PreparedStatement miStatement = this.miConexion.prepareStatement("select * from Resultados_partidas where Jugador_NOMBRE =?");
+			
+			//2- Establecer los parametros
+			miStatement.setString(1, jugador);
+			
+			//3- Ejecutar la instruccion SQL
+			ResultSet miResultSet = miStatement.executeQuery();
+			
+			
+			//3- Recorrer el ResultSet
+			int mensaje = 13;
+			System.out.println(imprimirMensaje(idioma, mensaje)+"\n");
+			//System.out.println("nro. de partida\t nombre\t comienzo de partida\t\t final de partida\t\t ganador\n");
+			while (miResultSet.next()) {
+				System.out.println(miResultSet.getString("idresultado_partida") + "\t\t\t"+ miResultSet.getString("Jugador_NOMBRE") + "\t "+ miResultSet.getString("comienzo_partida") + "\t "+ miResultSet.getString("final_partida") + "\t "+ miResultSet.getString("ganador"));
+			}
+			
+			miResultSet.close();
+		}
+		
+		catch(Exception e) {
+			System.out.println("No conecta imprimir tabla de resultados de jugador");
+			e.printStackTrace();
+		}
+	}
+	
 }
