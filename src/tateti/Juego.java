@@ -11,8 +11,6 @@ public class Juego {
 		Tablero tablero = new Tablero();
 		Estadisticas estadisticas = new Estadisticas();
 		tablero.limpiar();
-		LocalDateTime inicioPartida = LocalDateTime.now();
-		LocalDateTime finPartida = null;
 		ConectaBD bd = new ConectaBD("localhost:3306/Tateti","root","almitasol20");
 		int idioma = seleccionarIdioma(bd, lector);
 		imprimirBienvenida(bd,idioma);
@@ -25,6 +23,8 @@ public class Juego {
 					break;
 				case 2:
 					tablero.imprimir();
+					LocalDateTime inicioPartida = LocalDateTime.now();
+					LocalDateTime finPartida = null;
 					loopDeJuego(estadisticas, tablero, lector, bd, idioma, inicioPartida);
 					cargarResultadoPartida(estadisticas, tablero, inicioPartida, finPartida, nombreJugador, bd, idioma);
 					break;
@@ -128,6 +128,7 @@ public class Juego {
 	private static void cargarResultadoPartida(Estadisticas estadisticas , Tablero tablero,  LocalDateTime inicioPartida,  LocalDateTime finPartida, String nombre, ConectaBD bd, int idioma ) {
 		finPartida = LocalDateTime.now();
 		if (tablero.getHayGanador()) {
+			int mensaje = 9;
 			String ganador = "";
 			int ganadorEntero = estadisticas.getTurnoDeJugador() -1;
 			if (ganadorEntero == 1) {
@@ -135,6 +136,7 @@ public class Juego {
 			} else {
 				ganador = "Matrix";
 			}
+			System.out.println(bd.imprimirMensaje(idioma, mensaje) + " " + ganador);
 			bd.cargarResultados(inicioPartida, finPartida, nombre, ganador);
 		} else {
 			int mensaje = 10;
@@ -150,7 +152,7 @@ public class Juego {
 		do {
 			System.out.println();
 			for(int i = 1; i <=4; i++) {
-				System.out.println(bd.imprimirMensaje(i, mensaje));
+				System.out.println(i+ "- " +bd.imprimirMensaje(i, mensaje));
 			}
 			valor = Integer.parseInt(lector.nextLine());
 		} while (!(valor >= 1 && valor <= 4));
@@ -175,6 +177,7 @@ public class Juego {
 	
 	private static void imprimirMenu(ConectaBD bd, int idioma) {
 		int mensaje = 15;
+		System.out.println();
 		for (int i =1; i <=5; i++) {
 			System.out.println(i + "- " + bd.imprimirMensaje(idioma, mensaje +i));
 		}
