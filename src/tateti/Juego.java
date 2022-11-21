@@ -10,7 +10,6 @@ public class Juego {
 		Scanner lector = new Scanner(System.in);
 		Tablero tablero = new Tablero();
 		Estadisticas estadisticas = new Estadisticas();
-		tablero.limpiar();
 		ConectaBD bd = new ConectaBD("localhost:3306/Tateti","root","almitasol20");
 		int idioma = seleccionarIdioma(bd, lector);
 		imprimirBienvenida(bd,idioma);
@@ -22,6 +21,7 @@ public class Juego {
 					idioma = seleccionarIdioma(bd, lector);
 					break;
 				case 2:
+					tablero.limpiar();
 					tablero.imprimir();
 					LocalDateTime inicioPartida = LocalDateTime.now();
 					LocalDateTime finPartida = null;
